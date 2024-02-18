@@ -23,11 +23,11 @@ pub fn run() -> Result<()> {
     let cities = read_to_string(file)?;
     let mut result;
     let mut rng = rand::thread_rng();
-
     let mut count = 0;
 
     'outer: while count <= limit {
         result = vec![];
+
         for city in cities.split('\n') {
             let temp = rng.gen_range(-40.0..60.0);
             let res = format!("{city};{:.1}\n", temp);
@@ -38,9 +38,11 @@ pub fn run() -> Result<()> {
 
             if count >= limit {
                 let _ = write_results(&result);
+
                 break 'outer;
             }
         }
+
         let _ = write_results(&result);
     }
 
