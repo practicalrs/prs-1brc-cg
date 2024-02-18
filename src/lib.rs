@@ -18,11 +18,10 @@ impl std::fmt::Display for Error {
 
 pub fn run() -> Result<()> {
     let limit = 1000000000;
-    //let limit = 10000;
     let args: Vec<String> = env::args().collect();
     let file = args.last().ok_or(Error::CommandLine)?;
     let cities = read_to_string(file)?;
-    let mut result = vec![];
+    let mut result;
     let mut rng = rand::thread_rng();
 
     let mut count = 0;
@@ -31,7 +30,7 @@ pub fn run() -> Result<()> {
         result = vec![];
         for city in cities.split('\n') {
             let temp = rng.gen_range(-40.0..60.0);
-            let res = format!("{city};{:.2}\n", temp);
+            let res = format!("{city};{:.1}\n", temp);
 
             result.push(res);
 
@@ -43,23 +42,21 @@ pub fn run() -> Result<()> {
             }
         }
         let _ = write_results(&result);
-        println!("count = {count}");
     }
-
-    println!("res count {}", result.len());
 
     Ok(())
 }
 
 fn write_results(result: &[String]) -> Result<()> {
-    println!("WR");
-    let mut file = OpenOptions::new().append(true).create(true).read(true).write(true).open("result.csv")?;
+    let mut file = OpenOptions::new()
+        .append(true)
+        .create(true)
+        .read(true)
+        .open("result.csv")?;
 
     for res in result {
         file.write_all(res.as_bytes())?;
     }
-
-    let _ = file.flush();
 
     Ok(())
 }
