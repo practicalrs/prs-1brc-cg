@@ -1,3 +1,4 @@
+use rand::Rng;
 use std::{env, fs::read_to_string, fs::OpenOptions, io::Write};
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
@@ -16,19 +17,21 @@ impl std::fmt::Display for Error {
 }
 
 pub fn run() -> Result<()> {
-    //let limit = 1000000000;
-    let limit = 10000;
+    let limit = 1000000000;
+    //let limit = 10000;
     let args: Vec<String> = env::args().collect();
     let file = args.last().ok_or(Error::CommandLine)?;
     let cities = read_to_string(file)?;
     let mut result = vec![];
+    let mut rng = rand::thread_rng();
 
     let mut count = 0;
 
     'outer: while count <= limit {
         result = vec![];
         for city in cities.split('\n') {
-            let res = format!("{city}\n");
+            let temp = rng.gen_range(-40.0..60.0);
+            let res = format!("{city};{:.2}\n", temp);
 
             result.push(res);
 
@@ -50,7 +53,7 @@ pub fn run() -> Result<()> {
 
 fn write_results(result: &[String]) -> Result<()> {
     println!("WR");
-    let mut file = OpenOptions::new().append(true).create(true).read(true).write(true).open("/home/michal/projects/prs-1brc-cg/result.csv")?;
+    let mut file = OpenOptions::new().append(true).create(true).read(true).write(true).open("result.csv")?;
 
     for res in result {
         file.write_all(res.as_bytes())?;
